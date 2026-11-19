@@ -1,3 +1,4 @@
+
 package marketplace;
 
 import java.util.List;
@@ -6,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import marketplace.dto.ProductRequestDTO;
+import marketplace.dto.ProductResponseDTO;
 import marketplace.entity.Product;
 import marketplace.repository.ProductRepository;
 import marketplace.service.ProductService;
@@ -34,13 +37,14 @@ class MarketplaceApplicationTests {
 		product.setStock(10);
 
 		Product savedProduct = productRepository.save(product);
-		System.out.println("Produxt ID: " + savedProduct.getId());
+
+		System.out.println("Product ID: " + savedProduct.getId());
 	}
 
 	@Test
 	void shouldFindAllProducts() {
 
-		List<Product> products = productService.findAllProducts();
+		List<ProductResponseDTO> products = productService.findAllProducts();
 
 		products.forEach(product -> {
 			System.out.println("Product: " + product.getName());
@@ -50,27 +54,29 @@ class MarketplaceApplicationTests {
 	@Test
 	void shouldFindProductById() {
 
-		Product product = productService.findProductById(3L);
+		ProductResponseDTO product = productService.findProductById(3L);
 
 		System.out.println("Found Product: " + product.getName());
+
 	}
+
 	@Test
 	void shouldDeleteProduct() {
 
-	    Product product = new Product();
+		ProductRequestDTO dto = new ProductRequestDTO();
 
-	    product.setName("Product to delete");
-	    product.setDescription("Temporary product");
-	    product.setPrice(100.0);
-	    product.setStock(5);
+		dto.setName("Product to delete");
+		dto.setDescription("Temporary product");
+		dto.setPrice(100.0);
+		dto.setStock(5);
 
-	    Product savedProduct = productService.saveProduct(product);
+		ProductResponseDTO savedProduct = productService.saveProduct(dto);
 
-	    productService.deleteProduct(savedProduct.getId());
+		productService.deleteProduct(savedProduct.getId());
 
-	    Product deletedProduct = productService.findProductById(savedProduct.getId());
+		ProductResponseDTO deletedProduct = productService.findProductById(savedProduct.getId());
 
-	    System.out.println("Product deleted: " + (deletedProduct == null));
+		System.out.println("Product deleted: " + (deletedProduct == null));
 	}
 
 }

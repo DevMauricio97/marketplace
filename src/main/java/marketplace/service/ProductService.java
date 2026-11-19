@@ -1,6 +1,9 @@
 package marketplace.service;
 
 import java.util.List;
+import marketplace.dto.ProductMapper;
+import marketplace.dto.ProductRequestDTO;
+import marketplace.dto.ProductResponseDTO;
 
 import org.springframework.stereotype.Service;
 
@@ -14,19 +17,32 @@ public class ProductService {
 
 	public ProductService(ProductRepository productRepository) {
 		this.productRepository = productRepository;
+	}
+
+	public ProductResponseDTO saveProduct(ProductRequestDTO dto) {
+
+		Product product = ProductMapper.toEntity(dto);
+
+		Product savedProduct = productRepository.save(product);
+
+		return ProductMapper.toResponseDTO(savedProduct);
+	}
+
+	public List<ProductResponseDTO> findAllProducts() {
+
+		return productRepository.findAll().stream().map(ProductMapper::toResponseDTO).toList();
 
 	}
 
-	public Product saveProduct(Product product) {
-		return productRepository.save(product);
-	}
+	public ProductResponseDTO findProductById(Long id) {
 
-	public List<Product> findAllProducts() {
-		return productRepository.findAll();
-	}
+		Product product = productRepository.findById(id).orElse(null);
 
-	public Product findProductById(Long id) {
-		return productRepository.findById(id).orElse(null);
+		if (product == null) {
+			return null;
+		}
+
+		return ProductMapper.toResponseDTO(product);
 	}
 
 	public void deleteProduct(Long id) {
